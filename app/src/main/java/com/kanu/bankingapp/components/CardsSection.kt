@@ -1,6 +1,7 @@
 package com.kanu.bankingapp.components
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -97,13 +99,22 @@ fun BankCardItem(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
-                    // Simulating a chip or logo
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp, 30.dp)
-                            .padding(4.dp)
-                            .background(Color.White.copy(alpha = 0.2f), RoundedCornerShape(4.dp))
-                    )
+                    
+                    if (card.logoRes != null) {
+                        Image(
+                            painter = painterResource(id = card.logoRes),
+                            contentDescription = card.cardType,
+                            modifier = Modifier.size(60.dp, 45.dp)
+                        )
+                    } else {
+                        // Simulating a chip or logo if resource is missing
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp, 30.dp)
+                                .padding(4.dp)
+                                .background(Color.White.copy(alpha = 0.2f), RoundedCornerShape(4.dp))
+                        )
+                    }
                 }
 
                 Text(

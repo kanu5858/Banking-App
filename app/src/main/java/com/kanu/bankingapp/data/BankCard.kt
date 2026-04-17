@@ -7,5 +7,6 @@ data class BankCard(
     val cardNumber: String,
     val expiryDate: String,
     val cardType: String,
-    val backgroundColor: Color
+    val backgroundColor: Color,
+    val logoRes: Int? = null
 )

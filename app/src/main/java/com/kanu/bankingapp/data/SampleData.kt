@@ -1,18 +1,7 @@
 package com.kanu.bankingapp.data
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.filled.Star
+import com.kanu.bankingapp.R
 
 object SampleData {
     val cards = listOf(
@@ -21,21 +10,24 @@ object SampleData {
             cardNumber = "4532 1234 5678 9012",
             expiryDate = "12/26",
             cardType = "Visa",
-            backgroundColor = Color(0xFF1A1A1A)
+            backgroundColor = Color(0xFF1A1A1A),
+            logoRes = R.drawable.visa
         ),
         BankCard(
             cardHolder = "Boru GB",
             cardNumber = "5412 8765 4321 0987",
             expiryDate = "05/25",
             cardType = "MasterCard",
-            backgroundColor = Color(0xFF3F51B5)
+            backgroundColor = Color(0xFF3F51B5),
+            logoRes = R.drawable.master_card
         ),
         BankCard(
             cardHolder = "Boru GB",
             cardNumber = "3782 9999 8888 7777",
             expiryDate = "09/27",
             cardType = "Amex",
-            backgroundColor = Color(0xFF009688)
+            backgroundColor = Color(0xFF009688),
+            logoRes = R.drawable.amex
         )
     )
 
