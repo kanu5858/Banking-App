@@ -30,6 +30,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kanu.bankingapp.components.BalanceCard
+import com.kanu.bankingapp.components.CardsSection
+import com.kanu.bankingapp.components.QuickActionsSection
 import com.kanu.bankingapp.components.SendMoneySection
 import com.kanu.bankingapp.components.SpendingChart
 import com.kanu.bankingapp.components.TransactionItem
@@ -96,6 +98,16 @@ fun HomeScreen(
             item {
                 BalanceCard(
                     modifier = Modifier.padding(16.dp)
+                )
+            }
+
+            item {
+                CardsSection()
+            }
+
+            item {
+                QuickActionsSection(
+                    modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
 

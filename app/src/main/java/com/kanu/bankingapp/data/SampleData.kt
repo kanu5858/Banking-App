@@ -1,5 +1,6 @@
 package com.kanu.bankingapp.data
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
@@ -14,6 +15,30 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
 
 object SampleData {
+    val cards = listOf(
+        BankCard(
+            cardHolder = "Boru GB",
+            cardNumber = "4532 1234 5678 9012",
+            expiryDate = "12/26",
+            cardType = "Visa",
+            backgroundColor = Color(0xFF1A1A1A)
+        ),
+        BankCard(
+            cardHolder = "Boru GB",
+            cardNumber = "5412 8765 4321 0987",
+            expiryDate = "05/25",
+            cardType = "MasterCard",
+            backgroundColor = Color(0xFF3F51B5)
+        ),
+        BankCard(
+            cardHolder = "Boru GB",
+            cardNumber = "3782 9999 8888 7777",
+            expiryDate = "09/27",
+            cardType = "Amex",
+            backgroundColor = Color(0xFF009688)
+        )
+    )
+
     val transactions = listOf(
         Transaction(1, "Netflix Subscription", "Oct 12, 2023", 15.99, true, 0),
         Transaction(2, "Salary Deposit", "Oct 10, 2023", 4500.00, false, 0),
