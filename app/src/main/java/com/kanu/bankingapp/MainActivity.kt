@@ -11,13 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.kanu.bankingapp.screens.HistoryScreen
-import com.kanu.bankingapp.screens.HomeScreen
-import com.kanu.bankingapp.screens.PaymentScreen
-import com.kanu.bankingapp.screens.ScanScreen
-import com.kanu.bankingapp.screens.SendMoneyScreen
-import com.kanu.bankingapp.screens.TopUpScreen
-import com.kanu.bankingapp.screens.TransactionDetailScreen
+import com.kanu.bankingapp.screens.*
 import com.kanu.bankingapp.ui.theme.BankingTheme
 
 class MainActivity : ComponentActivity() {
@@ -37,8 +31,15 @@ fun BankingApp() {
 
         NavHost(
             navController = navController,
-            startDestination = "home"
+            startDestination = "splash"
         ) {
+            composable("splash") {
+                SplashScreen(onNextScreen = {
+                    navController.navigate("home") {
+                        popUpTo("splash") { inclusive = true }
+                    }
+                })
+            }
             composable("home") {
                 HomeScreen(
                     onTransactionClick = { id ->
