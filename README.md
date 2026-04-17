@@ -1,33 +1,52 @@
-# Banking App
+# Modern Banking App 🏦
 
-## Planned Features
+A robust, professionally designed Android banking application built with **Jetpack Compose**, following modern Material 3 design principles. This app features a clean user interface, seamless navigation, and real-time UI updates based on user interaction and time of day.
 
-### 1. Cards Section
-Displays bank cards visually using a horizontal scroll.
-- **UI:** `LazyRow` + `Card`
-- **Details:** Masked card number, card holder name, and expiry date.
+## ✨ Key Features
 
-### 2. Transactions List
-A list of recent transactions.
-- **UI:** `LazyColumn` with custom list items.
-- **Details:** Title (e.g., Netflix, Amazon), date, and amount (positive/negative).
+### 🕒 Dynamic Experience
+- **Time-Aware Greetings**: Personalized home screen greetings (Good Morning, Afternoon, Evening) that adapt based on the device's current time.
+- **Interactive UI**: Ripple effects, smooth transitions, and state-driven UI components.
 
-### 3. Transaction Details Click
-Implementing `onTransactionClick = {}` to handle user interactions.
-- **Actions:** Open details screen, show dialog, or navigate to a new page.
+### 💳 Card Management
+- **Horizontal Cards Section**: Swipe through multiple bank cards (Visa, MasterCard, Amex) with branded logos and custom styling.
+- **Visual Accuracy**: High-quality card layouts displaying masked numbers, holder names, and expiry dates.
 
-### 4. Quick Actions / Services
-Action buttons for common banking tasks.
-- **Actions:** Send money, Pay bills, Top up.
-- **UI:** Compose `Button` and `Icon` components.
+### 💸 Financial Actions
+- **Send Money**: Integrated flow with contact search and a custom numerical amount input screen.
+- **Quick Actions**: One-tap access to Pay Bills, Scan QR, and Top Up services.
+- **Payments Hub**: Dedicated screen for utility payments (Electricity, Water, Internet, etc.) with categorized service icons.
 
-### 5. Custom Theme
-A consistent and modern look using `BankingTheme`.
-- **Details:** Custom colors, typography, and support for Dark/Light mode.
+### 📜 Transaction Intelligence
+- **Detailed History**: Complete transaction log with sophisticated filtering (All, Income, Expenses).
+- **Transaction Details**: In-depth view for every transaction including date, status, and amount.
+- **Spending Insights**: Visual chart representing weekly spending patterns.
 
-## Troubleshooting
+## 🛠️ Technical Stack
 
-### App Crash on Launch (Missing INTERNET Permission)
-**Issue:** The app would crash immediately after launch when attempting to perform network operations. The logcat showed a `java.lang.SecurityException: Permission denied (missing INTERNET permission?)`.
+- **UI Framework**: [Jetpack Compose](https://developer.android.com/jetpack/compose) (Material 3)
+- **Navigation**: [Compose Navigation](https://developer.android.com/jetpack/compose/navigation)
+- **Image Loading**: [Coil](https://coil-kt.github.io/coil/compose/) for optimized contact avatars.
+- **Language**: Kotlin
+- **Architecture**: Modern Android Architecture patterns.
 
-**Fix:** Added `<uses-permission android:name="android.permission.INTERNET" />` to the `AndroidManifest.xml` file.
+## 🚀 Getting Started
+
+### Prerequisites
+- Android Studio Jellyfish or newer.
+- Android SDK 34 or higher.
+
+### Installation
+1. Clone the repository.
+2. Sync the project with Gradle files.
+3. Run the app on an emulator or physical device.
+
+## 🔧 Troubleshooting & Performance
+
+- **Network Security**: `INTERNET` permission is configured for contact avatar loading.
+- **Asset Optimization**: High-resolution drawables are named according to Android resource standards (snake_case) to prevent build-time errors.
+- **ANR Prevention**: All heavy resource operations and list rendering are optimized using `Lazy` components to ensure a smooth 60fps experience.
+
+## 📄 License
+
+This project is for educational purposes and demonstrates modern Android development practices.
