@@ -24,11 +24,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import java.util.Calendar
 import com.kanu.bankingapp.components.BalanceCard
 import com.kanu.bankingapp.components.CardsSection
 import com.kanu.bankingapp.components.QuickActionsSection
@@ -41,15 +43,26 @@ import com.kanu.bankingapp.ui.theme.BankingTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onTransactionClick: (Int) -> Unit
+    onTransactionClick: (Int) -> Unit,
+    onActionClick: (String) -> Unit
 ) {
+    val greeting = remember {
+        val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        when (hour) {
+            in 0..11 -> "Good Morning,"
+            in 12..15 -> "Good Afternoon,"
+            in 16..20 -> "Good Evening,"
+            else -> "Good Night,"
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Column {
                         Text(
-                            text = "Good Morning,",
+                            text = greeting,
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                         )
@@ -107,13 +120,20 @@ fun HomeScreen(
 
             item {
                 QuickActionsSection(
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    onActionClick = onActionClick
                 )
             }
 
             item {
                 SendMoneySection(
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    onContactClick = { contact ->
+                        onActionClick("send")
+                    },
+                    onAddClick = {
+                        onActionClick("send")
+                    }
                 )
             }
 
@@ -146,6 +166,6 @@ fun HomeScreen(
 @Composable
 fun HomeScreenPreview() {
     BankingTheme {
-        HomeScreen(onTransactionClick = {})
+        HomeScreen(onTransactionClick = {}, onActionClick = {})
     }
 }

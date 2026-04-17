@@ -1,6 +1,8 @@
 package com.kanu.bankingapp.components
 
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
@@ -25,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,8 +41,12 @@ import com.kanu.bankingapp.ui.theme.BankingTheme
 @Composable
 fun SendMoneySection(
     modifier: Modifier = Modifier,
-    contacts: List<Contact> = SampleData.contacts
+    contacts: List<Contact> = SampleData.contacts,
+    onContactClick: (Contact) -> Unit = {},
+    onAddClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+    
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
@@ -61,7 +69,13 @@ fun SendMoneySection(
             item {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable { 
+                            onAddClick()
+                            Toast.makeText(context, "Adding new contact...", Toast.LENGTH_SHORT).show()
+                        }
                 ) {
                     Box(
                         modifier = Modifier
@@ -87,16 +101,29 @@ fun SendMoneySection(
 
             // Contact items
             items(contacts) { contact ->
-                ContactItem(contact = contact)
+                ContactItem(
+                    contact = contact,
+                    onClick = {
+                        onContactClick(contact)
+                        Toast.makeText(context, "Sending money to ${contact.name}...", Toast.LENGTH_SHORT).show()
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-fun ContactItem(contact: Contact) {
+fun ContactItem(
+    contact: Contact,
+    onClick: () -> Unit = {}
+) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { onClick() }
+            .padding(4.dp)
     ) {
         AsyncImage(
             model = contact.avatarUrl,
