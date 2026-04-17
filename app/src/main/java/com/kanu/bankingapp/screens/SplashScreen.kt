@@ -36,13 +36,13 @@ fun SplashScreen(onNextScreen: () -> Unit) {
     LaunchedEffect(key1 = true) {
         scale.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 1000)
+            animationSpec = tween(durationMillis = 800)
         )
         alpha.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 1000)
+            animationSpec = tween(durationMillis = 800)
         )
-        delay(2000L)
+        delay(800L) // Reduced delay for faster app entry
         onNextScreen()
     }
 
@@ -68,13 +68,13 @@ fun SplashScreen(onNextScreen: () -> Unit) {
                     modifier = Modifier.size(60.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
-                Text(
-                    text = "B",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    modifier = Modifier.align(Alignment.BottomEnd) // Placeholder for 'B' on Wallet
-                )
+//                Text(
+//                    text = "B",
+//                    color = Color.White,
+//                    fontWeight = FontWeight.Bold,
+//                    fontSize = 24.sp,
+//                    modifier = Modifier.align(Alignment.BottomEnd) // Placeholder for 'B' on Wallet
+//                )
             }
             
             Spacer(modifier = Modifier.height(24.dp))

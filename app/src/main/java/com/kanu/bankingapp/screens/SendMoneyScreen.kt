@@ -1,5 +1,6 @@
 package com.kanu.bankingapp.screens
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -29,145 +31,325 @@ import android.widget.Toast
 import coil.compose.AsyncImage
 import com.kanu.bankingapp.data.Contact
 import com.kanu.bankingapp.data.SampleData
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+enum class SendFlowStep {
+    SELECT_CONTACT,
+    ENTER_AMOUNT,
+    CONFIRMATION,
+    SUCCESS
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SendMoneyScreen(
     onBackClick: () -> Unit
 ) {
+    var currentStep by remember { mutableStateOf(SendFlowStep.SELECT_CONTACT) }
     var searchQuery by remember { mutableStateOf("") }
     var selectedContact by remember { mutableStateOf<Contact?>(null) }
     var amount by remember { mutableStateOf("") }
-    val context = LocalContext.current
+    var note by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
 
-    val filteredContacts = SampleData.contacts.filter { 
-        it.name.contains(searchQuery, ignoreCase = true) 
+    val filteredContacts = SampleData.contacts.filter {
+        it.name.contains(searchQuery, ignoreCase = true)
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (selectedContact == null) "Send Money" else "Enter Amount", fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        text = when (currentStep) {
+                            SendFlowStep.SELECT_CONTACT -> "Send Money"
+                            SendFlowStep.ENTER_AMOUNT -> "Enter Amount"
+                            SendFlowStep.CONFIRMATION -> "Review Transfer"
+                            SendFlowStep.SUCCESS -> "Transfer Success"
+                        },
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        if (selectedContact != null) selectedContact = null else onBackClick()
-                    }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    if (currentStep != SendFlowStep.SUCCESS) {
+                        IconButton(onClick = {
+                            when (currentStep) {
+                                SendFlowStep.SELECT_CONTACT -> onBackClick()
+                                SendFlowStep.ENTER_AMOUNT -> currentStep = SendFlowStep.SELECT_CONTACT
+                                SendFlowStep.CONFIRMATION -> currentStep = SendFlowStep.ENTER_AMOUNT
+                                else -> {}
+                            }
+                        }) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        }
                     }
                 }
             )
         }
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            if (selectedContact == null) {
-                // Search Bar
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    placeholder = { Text("Search contact or enter name") },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true
-                )
-
-                Text(
-                    text = "Recent Contacts",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 16.dp)
-                ) {
-                    items(filteredContacts) { contact ->
-                        ContactRow(contact = contact, onClick = { selectedContact = contact })
+            AnimatedContent(
+                targetState = currentStep,
+                transitionSpec = {
+                    if (targetState.ordinal > initialState.ordinal) {
+                        slideInHorizontally { it } + fadeIn() togetherWith slideOutHorizontally { -it } + fadeOut()
+                    } else {
+                        slideInHorizontally { -it } + fadeIn() togetherWith slideOutHorizontally { it } + fadeOut()
                     }
-                }
-            } else {
-                // Amount Input View
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    AsyncImage(
-                        model = selectedContact?.avatarUrl,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(100.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surface),
-                        contentScale = ContentScale.Crop
+                },
+                label = "SendFlow"
+            ) { step ->
+                when (step) {
+                    SendFlowStep.SELECT_CONTACT -> SelectContactStep(
+                        searchQuery = searchQuery,
+                        onSearchChange = { searchQuery = it },
+                        contacts = filteredContacts,
+                        onContactSelect = {
+                            selectedContact = it
+                            currentStep = SendFlowStep.ENTER_AMOUNT
+                        }
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "Sending to ${selectedContact?.name}",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
+                    SendFlowStep.ENTER_AMOUNT -> EnterAmountStep(
+                        contact = selectedContact!!,
+                        amount = amount,
+                        onAmountChange = { amount = it },
+                        onNext = { currentStep = SendFlowStep.CONFIRMATION }
                     )
-                    Spacer(modifier = Modifier.height(32.dp))
-                    
-                    TextField(
-                        value = amount,
-                        onValueChange = { if (it.all { char -> char.isDigit() || char == '.' }) amount = it },
-                        textStyle = MaterialTheme.typography.headlineLarge.copy(
-                            textAlign = TextAlign.Center,
-                            fontSize = 48.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        placeholder = { 
-                            Text(
-                                "$0.00", 
-                                style = MaterialTheme.typography.headlineLarge.copy(
-                                    textAlign = TextAlign.Center,
-                                    fontSize = 48.sp,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                                ),
-                                modifier = Modifier.fillMaxWidth()
-                            ) 
-                        },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
-                    
-                    Spacer(modifier = Modifier.weight(1f))
-                    
-                    Button(
-                        onClick = {
-                            if (amount.isNotEmpty()) {
-                                Toast.makeText(context, "Successfully sent $$amount to ${selectedContact?.name}", Toast.LENGTH_LONG).show()
-                                onBackClick()
+                    SendFlowStep.CONFIRMATION -> ConfirmationStep(
+                        contact = selectedContact!!,
+                        amount = amount,
+                        note = note,
+                        onNoteChange = { note = it },
+                        onConfirm = {
+                            scope.launch {
+                                // Simulate network delay
+                                currentStep = SendFlowStep.SUCCESS
                             }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        enabled = amount.isNotEmpty()
-                    ) {
-                        Text("Send Now", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                    }
+                        }
+                    )
+                    SendFlowStep.SUCCESS -> SuccessStep(
+                        contact = selectedContact!!,
+                        amount = amount,
+                        onDone = onBackClick
+                    )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun SelectContactStep(
+    searchQuery: String,
+    onSearchChange: (String) -> Unit,
+    contacts: List<Contact>,
+    onContactSelect: (Contact) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = onSearchChange,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            placeholder = { Text("Search contact or enter name") },
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+            shape = RoundedCornerShape(12.dp),
+            singleLine = true
+        )
+
+        Text(
+            text = "Recent Contacts",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        )
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 16.dp)
+        ) {
+            items(contacts) { contact ->
+                ContactRow(contact = contact, onClick = { onContactSelect(contact) })
+            }
+        }
+    }
+}
+
+@Composable
+fun EnterAmountStep(
+    contact: Contact,
+    amount: String,
+    onAmountChange: (String) -> Unit,
+    onNext: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        AsyncImage(
+            model = contact.avatarUrl,
+            contentDescription = null,
+            modifier = Modifier
+                .size(80.dp)
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(text = "Sending to ${contact.name}", style = MaterialTheme.typography.bodyLarge)
+        
+        Spacer(modifier = Modifier.height(48.dp))
+        
+        TextField(
+            value = amount,
+            onValueChange = { if (it.all { char -> char.isDigit() || char == '.' }) onAmountChange(it) },
+            textStyle = MaterialTheme.typography.headlineLarge.copy(
+                textAlign = TextAlign.Center,
+                fontSize = 48.sp,
+                fontWeight = FontWeight.Bold
+            ),
+            placeholder = {
+                Text(
+                    "$0.00",
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        textAlign = TextAlign.Center,
+                        fontSize = 48.sp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+        
+        Spacer(modifier = Modifier.weight(1f))
+        
+        Button(
+            onClick = onNext,
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(16.dp),
+            enabled = amount.isNotEmpty() && amount.toDoubleOrNull() ?: 0.0 > 0
+        ) {
+            Text("Continue", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
+@Composable
+fun ConfirmationStep(
+    contact: Contact,
+    amount: String,
+    note: String,
+    onNoteChange: (String) -> Unit,
+    onConfirm: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    AsyncImage(
+                        model = contact.avatarUrl,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp).clip(CircleShape)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column {
+                        Text(text = contact.name, fontWeight = FontWeight.Bold)
+                        Text(text = "Savings Account", style = MaterialTheme.typography.bodySmall)
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(text = "$$amount", fontWeight = FontWeight.ExtraBold, fontSize = 20.sp)
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        OutlinedTextField(
+            value = note,
+            onValueChange = onNoteChange,
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text("Add a note (optional)") },
+            placeholder = { Text("e.g. Dinner, Rent") },
+            shape = RoundedCornerShape(12.dp)
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Fee information
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(text = "Transfer Fee", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+            Text(text = "Free", color = Color(0xFF4CAF50), fontWeight = FontWeight.Bold)
+        }
+        
+        Spacer(modifier = Modifier.weight(1f))
+        
+        Button(
+            onClick = onConfirm,
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Text("Confirm & Send", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
+@Composable
+fun SuccessStep(
+    contact: Contact,
+    amount: String,
+    onDone: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.CheckCircle,
+            contentDescription = null,
+            modifier = Modifier.size(100.dp),
+            tint = Color(0xFF4CAF50)
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(text = "Transfer Successful!", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "You've successfully sent $$amount to ${contact.name}.",
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+        )
+        
+        Spacer(modifier = Modifier.height(48.dp))
+        
+        Button(
+            onClick = onDone,
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Text("Done", fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
