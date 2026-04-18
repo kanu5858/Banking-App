@@ -1,52 +1,48 @@
-# Modern Banking App 🏦
+# Banking App - Jetpack Compose
 
-A robust, professionally designed Android banking application built with **Jetpack Compose**, following modern Material 3 design principles. This app features a clean user interface, seamless navigation, and real-time UI updates based on user interaction and time of day.
+A modern, functional banking application built with Jetpack Compose, featuring real-time wallet state management, peer-to-peer "Magic QR" transfers, and a polished dark-themed UI.
+
+## 📱 Screenshots
+
+<p align="center">
+  <img src="app/src/main/res/drawable/splash.png" width="30%" alt="Splash Screen">
+  <img src="app/src/main/res/drawable/home.png" width="30%" alt="Home Screen">
+  <img src="app/src/main/res/drawable/txn_history.png" width="30%" alt="Transaction History">
+</p>
+
+<p align="center">
+  <img src="app/src/main/res/drawable/transfer.png" width="30%" alt="Transfer Confirmation">
+  <img src="app/src/main/res/drawable/profile.png" width="30%" alt="Profile Settings">
+</p>
 
 ## ✨ Key Features
 
-### 🕒 Dynamic Experience
-- **Time-Aware Greetings**: Personalized home screen greetings (Good Morning, Afternoon, Evening) that adapt based on the device's current time.
-- **Interactive UI**: Ripple effects, smooth transitions, and state-driven UI components.
+- **Centralized Reactive Wallet**: Managed by `WalletState` using `Double` for precise balance tracking.
+- **Magic QR Transfers**: Encode payment data into QR codes. Funds are locked in the sender's wallet and credited instantly upon scanning.
+- **Transaction History**: Real-time logging of all expenses, income, and QR-based movements with category-based icons.
+- **Security & Privacy**: 
+  - Balance privacy toggle (eye icon) to hide/show sensitive funds.
+  - Masked account and card numbers across the UI.
+  - Profile customization with bank detail visibility.
+- **Modern UI**: Full Dark Mode support, smooth Compose animations, and Material 3 components.
 
-### 💳 Card Management
-- **Horizontal Cards Section**: Swipe through multiple bank cards (Visa, MasterCard, Amex) with branded logos and custom styling.
-- **Visual Accuracy**: High-quality card layouts displaying masked numbers, holder names, and expiry dates.
+## 🛠️ Technical Highlights
 
-### 💸 Financial Actions
-- **Send Money**: Integrated flow with contact search and a custom numerical amount input screen.
-- **Quick Actions**: One-tap access to Pay Bills, Scan QR, and Top Up services.
-- **Payments Hub**: Dedicated screen for utility payments (Electricity, Water, Internet, etc.) with categorized service icons.
+- **State Management**: Singleton Pattern with Compose `mutableStateOf` and `mutableStateListOf`.
+- **Camera & Scanning**: Integrated CameraX with Google ML Kit for high-speed QR code processing.
+- **Lifecycle Management**: Memory-safe thread handling using `DisposableEffect` for camera executors.
+- **Asynchronous Operations**: Coroutines for splash animations and simulated processing states.
+- **UI Components**: custom reusable components like `BalanceCard`, `TransactionItem`, and `QuickActionsSection`.
 
-### 📜 Transaction Intelligence
-- **Detailed History**: Complete transaction log with sophisticated filtering (All, Income, Expenses).
-- **Transaction Details**: In-depth view for every transaction including date, status, and amount.
-- **Spending Insights**: Visual chart representing weekly spending patterns.
+## 🏗️ Project Structure
 
-## 🛠️ Technical Stack
-
-- **UI Framework**: [Jetpack Compose](https://developer.android.com/jetpack/compose) (Material 3)
-- **Navigation**: [Compose Navigation](https://developer.android.com/jetpack/compose/navigation)
-- **Image Loading**: [Coil](https://coil-kt.github.io/coil/compose/) for optimized contact avatars.
-- **Language**: Kotlin
-- **Architecture**: Modern Android Architecture patterns.
+- `data/`: State management and data models (`WalletState`, `Transaction`, `SampleData`).
+- `screens/`: Individual Compose screens (Home, History, Scan, Profile, etc.).
+- `components/`: Modular UI widgets used across the app.
+- `ui/theme/`: Custom Material 3 color schemes and typography.
 
 ## 🚀 Getting Started
 
-### Prerequisites
-- Android Studio Jellyfish or newer.
-- Android SDK 34 or higher.
-
-### Installation
 1. Clone the repository.
-2. Sync the project with Gradle files.
-3. Run the app on an emulator or physical device.
-
-## 🔧 Troubleshooting & Performance
-
-- **Network Security**: `INTERNET` permission is configured for contact avatar loading.
-- **Asset Optimization**: High-resolution drawables are named according to Android resource standards (snake_case) to prevent build-time errors.
-- **ANR Prevention**: All heavy resource operations and list rendering are optimized using `Lazy` components to ensure a smooth 60fps experience.
-
-## 📄 License
-
-This project is for educational purposes and demonstrates modern Android development practices.
+2. Open in Android Studio (Koala or newer).
+3. Build and run on an Android device or emulator (API 24+).

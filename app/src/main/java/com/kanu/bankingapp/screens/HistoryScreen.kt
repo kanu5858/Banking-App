@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kanu.bankingapp.components.TransactionItem
-import com.kanu.bankingapp.data.SampleData
+import com.kanu.bankingapp.data.WalletState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,11 +25,11 @@ fun HistoryScreen(
     var selectedFilter by remember { mutableStateOf("All") }
     val filters = listOf("All", "Income", "Expense")
 
-    val filteredTransactions = remember(selectedFilter) {
+    val filteredTransactions = remember(selectedFilter, WalletState.transactions) {
         when (selectedFilter) {
-            "Income" -> SampleData.transactions.filter { it.amount > 0 }
-            "Expense" -> SampleData.transactions.filter { it.amount < 0 }
-            else -> SampleData.transactions
+            "Income" -> WalletState.transactions.filter { it.amount > 0 }
+            "Expense" -> WalletState.transactions.filter { it.amount < 0 }
+            else -> WalletState.transactions
         }
     }
 

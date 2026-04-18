@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.ConfirmationNumber
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -70,10 +71,37 @@ fun MyQrScreen(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
+            
+            // Enhanced Bank Information
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(top = 4.dp)
+            ) {
+                Surface(
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(4.dp)
+                ) {
+                    Text(
+                        text = "SAVINGS",
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "A/C •••• 9012",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Medium
+                )
+            }
             Text(
-                text = "Personal Payment Code",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                text = "Global Digital Bank • SWIFT: GDBKUS33",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                modifier = Modifier.padding(top = 2.dp)
             )
             
             Spacer(modifier = Modifier.height(32.dp))
@@ -195,9 +223,9 @@ fun MyQrScreen(
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(16.dp)
         ) {
-            Icon(Icons.Default.AutoAwesome, null)
+            Icon(Icons.Default.ConfirmationNumber, null)
             Spacer(modifier = Modifier.width(12.dp))
-            Text("Generate Magic QR", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text("Confirm", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         }
     } else {
         Row(
@@ -238,7 +266,7 @@ fun MyQrScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = "Magic QR locks the amount in your wallet.\nFunds are transferred only when the code is scanned.",
+                text = "While sending your wallet balance will be locked for a moment.\nFunds are transferred only when the code is scanned.",
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),

@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
 import coil.compose.AsyncImage
 import com.kanu.bankingapp.data.WalletState
 
@@ -22,7 +23,8 @@ import com.kanu.bankingapp.data.WalletState
 fun ProfileScreen(
     onBackClick: () -> Unit
 ) {
-    var editedName by remember { mutableStateOf(WalletState.userName) }
+    // Don't pre-fill the name as requested, use it as a placeholder instead
+    var editedName by remember { mutableStateOf("") }
     var isSaving by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -56,15 +58,70 @@ fun ProfileScreen(
         ) {
             Box(
                 modifier = Modifier
-                    .size(120.dp)
+                    .size(100.dp)
                     .clip(CircleShape)
             ) {
                 AsyncImage(
-                    model = "https://ui-avatars.com/api/?name=${editedName}&background=00C853&color=fff&size=256",
+                    model = "https://ui-avatars.com/api/?name=${if (editedName.isEmpty()) WalletState.userName else editedName}&background=00C853&color=fff&size=256",
                     contentDescription = "Profile Picture",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Display current bank info in profile
+            Text(
+                text = WalletState.userName,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
+            
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Surface(
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(4.dp)
+                ) {
+                    Text(
+                        text = "SAVINGS",
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "A/C •••• 9012",
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Bank Information Details Card
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                )
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        "Bank Details",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    DetailItem("Bank Name", "Global Digital Bank")
+                    DetailItem("SWIFT/BIC", "GDBKUS33")
+                    DetailItem("Routing No.", "021000021")
+                    DetailItem("Status", "Active", Color(0xFF4CAF50))
+                }
             }
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -72,25 +129,20 @@ fun ProfileScreen(
             OutlinedTextField(
                 value = editedName,
                 onValueChange = { editedName = it },
-                label = { Text("Display Name") },
+                label = { Text("Update Display Name") },
+                placeholder = { Text(WalletState.userName) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 singleLine = true
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "Your display name will be visible when you send money or share your QR code.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = {
-                    WalletState.userName = editedName
+                    if (editedName.isNotBlank()) {
+                        WalletState.userName = editedName
+                    }
                     onBackClick()
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
@@ -99,5 +151,16 @@ fun ProfileScreen(
                 Text("Save Changes", fontWeight = FontWeight.Bold)
             }
         }
+    }
+}
+
+@Composable
+fun DetailItem(label: String, value: String, valueColor: Color = Color.Unspecified) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+        Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = valueColor)
     }
 }
