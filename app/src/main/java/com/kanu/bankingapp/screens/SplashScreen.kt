@@ -3,12 +3,7 @@ package com.kanu.bankingapp.screens
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
@@ -42,7 +37,7 @@ fun SplashScreen(onNextScreen: () -> Unit) {
             targetValue = 1f,
             animationSpec = tween(durationMillis = 800)
         )
-        delay(800L) // Reduced delay for faster app entry
+        delay(800L)
         onNextScreen()
     }
 
@@ -68,13 +63,9 @@ fun SplashScreen(onNextScreen: () -> Unit) {
                     modifier = Modifier.size(60.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
-//                Text(
-//                    text = "B",
-//                    color = Color.White,
-//                    fontWeight = FontWeight.Bold,
-//                    fontSize = 24.sp,
-//                    modifier = Modifier.align(Alignment.BottomEnd) // Placeholder for 'B' on Wallet
-//                )
+                
+                // Professional "B" Logo Badge
+
             }
             
             Spacer(modifier = Modifier.height(24.dp))

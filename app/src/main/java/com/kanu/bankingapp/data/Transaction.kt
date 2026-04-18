@@ -6,5 +6,19 @@ data class Transaction(
     val date: String,
     val amount: Double,
     val isExpense: Boolean,
-    val icon: Int // drawable resource
+    val icon: Int, // drawable resource
+    val category: TransactionCategory = TransactionCategory.OTHER
 )
+
+enum class TransactionCategory {
+    SUBSCRIPTION,
+    SHOPPING,
+    FOOD,
+    WORK,
+    HEALTH,
+    ENTERTAINMENT,
+    TRANSPORT,
+    BILLS,
+    EDUCATION,
+    OTHER
+}

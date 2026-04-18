@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,7 +43,7 @@ import com.kanu.bankingapp.components.QuickActionsSection
 import com.kanu.bankingapp.components.SendMoneySection
 import com.kanu.bankingapp.components.SpendingChart
 import com.kanu.bankingapp.components.TransactionItem
-import com.kanu.bankingapp.data.SampleData
+import com.kanu.bankingapp.data.WalletState
 import com.kanu.bankingapp.ui.theme.BankingTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,7 +73,7 @@ fun HomeScreen(
                             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                         )
                         Text(
-                            text = "Boru GB",
+                            text = WalletState.userName,
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Bold
                             )
@@ -80,25 +81,32 @@ fun HomeScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { onActionClick("my_qr") }) {
+                        Icon(
+                            imageVector = Icons.Default.QrCode,
+                            contentDescription = "My QR Code"
+                        )
+                    }
                     IconButton(onClick = { /* TODO */ }) {
                         Icon(
                             imageVector = Icons.Default.Notifications,
                             contentDescription = "Notifications"
                         )
                     }
-                    Box(
-                        modifier = Modifier
-                            .padding(end = 16.dp, start = 8.dp)
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surface),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Profile",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
+                    IconButton(onClick = { onActionClick("profile") }) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surface),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Profile",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -115,7 +123,8 @@ fun HomeScreen(
         ) {
             item {
                 BalanceCard(
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp),
+                    balance = WalletState.balance
                 )
             }
 
@@ -167,7 +176,7 @@ fun HomeScreen(
             }
 
             // Show only first 5 transactions on home screen
-            items(SampleData.transactions.take(5)) { transaction ->
+            items(WalletState.transactions.take(5)) { transaction ->
                 TransactionItem(
                     transaction = transaction,
                     modifier = Modifier.padding(horizontal = 16.dp),

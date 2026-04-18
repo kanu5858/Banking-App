@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -58,6 +59,12 @@ fun BankingApp() {
             }
             composable("scan") {
                 ScanScreen(onBackClick = { navController.popBackStack() })
+            }
+            composable("my_qr") {
+                MyQrScreen(onBackClick = { navController.popBackStack() })
+            }
+            composable("profile") {
+                ProfileScreen(onBackClick = { navController.popBackStack() })
             }
             composable("topup") {
                 TopUpScreen(onBackClick = { navController.popBackStack() })

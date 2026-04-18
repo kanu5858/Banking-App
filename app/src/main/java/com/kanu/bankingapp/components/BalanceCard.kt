@@ -2,28 +2,13 @@ package com.kanu.bankingapp.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -35,14 +20,18 @@ import androidx.compose.ui.unit.sp
 import com.kanu.bankingapp.ui.theme.BankingTheme
 import com.kanu.bankingapp.ui.theme.DarkGreen
 import com.kanu.bankingapp.ui.theme.Mint
+import java.util.Locale
 
 @Composable
 fun BalanceCard(
     modifier: Modifier = Modifier,
-    balance: String = "$5,234.23",
-    accountNumber: String = "**** 1234"
+    balance: Double = 10454.0,
+    accountNumber: String = "**** 9012"
 ) {
     var showBalance by remember { mutableStateOf(true) }
+    val formattedBalance = remember(balance) {
+        String.format(Locale.US, "$%,.2f", balance)
+    }
 
     Card(
         modifier = modifier
@@ -67,7 +56,7 @@ fun BalanceCard(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Top
                 ) {
                     Column {
                         Text(
@@ -76,21 +65,28 @@ fun BalanceCard(
                             style = MaterialTheme.typography.labelLarge
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = if (showBalance) balance else "****",
-                            color = Color.White,
-                            style = MaterialTheme.typography.headlineLarge.copy(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 32.sp
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = if (showBalance) formattedBalance else "••••••••",
+                                color = Color.White,
+                                style = MaterialTheme.typography.headlineLarge.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 32.sp
+                                )
                             )
-                        )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            IconButton(
+                                onClick = { showBalance = !showBalance },
+                                modifier = Modifier.size(24.dp)
+                            ) {
+                                Icon(
+                                    imageVector = if (showBalance) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                                    contentDescription = "Toggle Balance",
+                                    tint = Color.White.copy(alpha = 0.8f)
+                                )
+                            }
+                        }
                     }
-                    Icon(
-                        imageVector = if (showBalance) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                        contentDescription = "Toggle Balance",
-                        tint = Color.White,
-                        modifier = Modifier.clickable { showBalance = !showBalance }
-                    )
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
