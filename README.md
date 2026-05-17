@@ -53,6 +53,6 @@ This app implements a custom P2P protocol for secure offline-to-online payments:
 
 ## 🚀 Getting Started
 1. Clone the repository.
-2. Open in **Android Studio Koala** or newer.
+2. Open in **Android Studio**.
 3. Ensure you have **JDK 17** configured.
 4. Build and run on an Android device (API 24+).
